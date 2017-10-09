@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title></title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="wrapper">
+
+	<div class="header">
+		 <div align="center"><b>Confgen</b></div>
+                 <b><a href="/index">Home</a></b>&emsp;
+                 {% for result in results %}
+                 <b><a href="/{{result}}">{{result}}</a></b>&emsp;
+                 {% endfor %}
+	</div><!-- .header-->
+
+	<div class="middle">
+
+		<div class="container">
+			<div class="content">
+				{% block content %}{% endblock %}
+			</div><!-- .content-->
+		</div><!-- .container-->
+
+	</div><!-- .middle-->
+
+</div><!-- .wrapper -->
+
+
+</body>
+</html>

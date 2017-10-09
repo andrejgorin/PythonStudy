@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<form action="" method="post" name="submit">
+        {{form.hidden_tag()}}                                                                                                       
+        <p>{{form.openid(size=80)}}</p>                                                                 
+        <p><input type="submit" value="Submit"></p>                                                                                     
+</form>
+<table><tr><td>
+<pre>
+{{vars}}
+{% if tempresult %}
+{{tempresult}}
+{% endif %}
+{{temp}}
+</pre>
+</td></tr></table>
+{% endblock %}

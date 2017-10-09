@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<table width="90%" align="center"><tr><td>
+<p><b>Syntax:</b> the values of the variables are entered via a semicolon. The elements inside the IF block are optional and can be omitted. Examples:</p>
+<p>['PORT', 'SPEED', 'GROUP', 'DESCRIPTION', 'VLAN_LIST'] => our string may be gi1/1;10M;3;Link to provider;10,20-30</p>
+<p>['PORT', 'SPEED', 'GROUP', 'DESCRIPTION', 'VLAN_LIST'] => our string may be gi1/1;10M;;Link to provider;10,20-30 - in this case port-channel group is omitted</p>
+<p><b>Result:</b></p>
+<pre>!default interface gi1/1
+interface gi1/1
+ description Link to provider
+ switchport trunk allowed vlan 10,20-30
+ switchport mode trunk
+ channel-group 3 mode active
+ service-policy output 10M
+ service-policy input 10M</pre>
+</td></tr></table>
+{% endblock %}
