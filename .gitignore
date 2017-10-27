@@ -1,1 +1,10 @@
 *.un~
+*~
+*.pyc
+*.swp
+*#
+.metadata
+.DS_Store
+*.log
+__pycache__
+venv
