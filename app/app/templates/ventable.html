@@ -1,19 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
-<br><table border="1" width="100%">
-<tr><th colspan="3"><b>{{vendor}} templates:</b></th></tr>
-<tr><td bgcolor="#9cd9cd"><b>Device:</b></td><td bgcolor="#9cd9cd"><b>Template name:</b></td><td bgcolor="#9cd9cd"><b>Comments:</b></td></tr>
+<div align="center"><H4>{{vendor}} templates</H4></div>
+<table class="table1" border="1" width="90%" align="center">
+<tr><th><b>Device:</b></th><th><b>Template name:</b></th><th><b>Comments:</b></th></tr>
     {% for arg in arg %}
-       <tr>
+       {% set uid = arg %}
+       <tr   onclick="document.location='/confgen/{{uid[0]}}'" style="cursor:hand" >
        {% for ar in arg %}
-         {% if loop.index == 1 %}
-          <td width="80"><b>{{ar}}</b></td> 
-         {% endif %}
-         {% if loop.index == 2 %}
-          <td width="160"><b><a href="confgen/{{ar}}">{{ar}}</a></b></td> 
-         {% endif %}
          {% if loop.index == 3 %}
-          <td><b>{{ar}}</b></td> 
+          <td width="80">{{ar}}</td> 
+         {% endif %}
+         {% if loop.index == 4 %}
+          <td width="160">{{ar}}</td> 
+         {% endif %}
+         {% if loop.index == 5 %}
+          <td>{{ar}}</td> 
          {% endif %}
        {% endfor %}
        </tr>

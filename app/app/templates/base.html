@@ -6,6 +6,7 @@
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />
 	<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 
 <body>
@@ -13,11 +14,14 @@
 <div class="wrapper">
 
 	<div class="header">
-		 <div align="center"><b>Confgen</b></div>
-                 <b><a href="/index">Home</a></b>&emsp;
+		 <div align="center"><H1><a href="/index">Confgen</a></H1></div>
+		         <table align="center" width="90%"><tr><td>
+                 <font size="3"><a href="/index">Home</a>&emsp;
+                 <a href="/manual">From file</a>&emsp;
                  {% for result in results %}
-                 <b><a href="/{{result}}">{{result}}</a></b>&emsp;
-                 {% endfor %}
+                 <a href="/{{result}}">{{result}}</a>&emsp;
+                 {% endfor %}</font>
+				 </td></tr></table>
 	</div><!-- .header-->
 
 	<div class="middle">

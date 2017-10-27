@@ -3,20 +3,43 @@
 	margin: 0;
 	padding: 0;
 }*/
+
+.button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+}
+.button:hover {
+    background-color: #edb357; /* Green */
+    color: white;
+}
 td {
         padding: 4px;
 } 
 th {
+    background-color: #4CAF50;
+    color: white;
     padding: 6px;
     font-size: 100%;
-    background-color: #9cd9cd;
-    color: black;
+    cursor:auto
 }
 tr:nth-child(even) {background-color: #E6E6E6}
+table.table1 tr:hover{
+    background-color:#edb357; 
+    color: white; 
+    cursor: pointer}
 table {
-        padding: 2px;
-        widht: 100%;
+    padding: 2px;
+    width: 90%;
 	border-spacing: 0;
+    border-collapse: collapse;
+    border: 1px #E6E6E6;
 }
 fieldset, img {
 	border: 0;
@@ -32,12 +55,16 @@ caption, th {
 	text-align: left;
 }
 h1, h2, h3  {
-        font-size: 200%;
+        font-size: 180%;
         font-weight: normal;
 } 
 
-h4, h5, h6 {
-	font-size: 100%;
+h4, h5 {
+	font-size: 130%;
+	font-weight: normal;
+}
+h6 {
+	font-size: 16pt;
 	font-weight: normal;
 }
 q:before, q:after {
@@ -65,13 +92,25 @@ body {
 }
 
 
+a:link {
+    color: white;
+    text-decoration: none;
+}
+
+a:visited {
+    color: white;
+}
+a:hover {
+    color: #edb357;
+}
 /* Header
 -----------------------------------------------------------------------------*/
 .header {
-	height: 50px;
-        padding-left: 50px;
+	height: 80px;
+        /*padding-left: 50px;*/
         padding-top: 10px;
-	background: #9cd9cd;
+	background: #4CAF50;
+    /*background: #4CAF50 url(network-nodes-72-170805.png) no-repeat right;*/
 }
 
 

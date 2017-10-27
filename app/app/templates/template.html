@@ -1,16 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
+
+<table width="90%" align="center"><tr><td>
+<div align='center'><p><H4>{{header[0][1]}} {{header[0][2]}} {{header[0][3]}} configuration</H4></p></div>
 <form action="" method="post" name="submit">
-        {{form.hidden_tag()}}                                                                                                       
-        <p>{{form.openid(size=80)}}</p>                                                                 
-        <p><input type="submit" value="Submit"></p>                                                                                     
+{{tform.hidden_tag()}} 
+{{tform.body(cols="45", rows="10")}}
+<p><input type="submit" value="Submit" class="button"></p>                                                                      
 </form>
-<table><tr><td>
-<pre>
-{{vars}}
-{% if tempresult %}
-{{tempresult}}
+{{stringvars}}
+{% if temout %}
+<form action="" method="post">
+<p><textarea rows="{{nlines}}" cols="{{line_length}}" name="text">
+{{stringtem}}
+</textarea></p>
+</form>
+<hr>
 {% endif %}
+<pre>
 {{temp}}
 </pre>
 </td></tr></table>
