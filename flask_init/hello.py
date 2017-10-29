@@ -17,7 +17,7 @@ def show_user_profile(username):
     
 @app.route('/hello')
 def hello_world():
-    #import pdb; pdb.set_trace() #from cli press 'n' to next or can execute commands, f.e. print(i)
+    #import pdb; pdb.set_trace() #from cli press 'n' to next or can execute commands, f.e. print(i).
     i = 1
     return 'You visited ' + str(i) + ' times'
 
