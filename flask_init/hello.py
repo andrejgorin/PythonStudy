@@ -1,11 +1,11 @@
-
 import os
+import sys
 from flask import Flask, url_for
 app = Flask(__name__)
-
 @app.route('/')
 def index():
-    return 'index page'
+    
+    return 'index page. powered by Python v' + ".".join([str(x) for x in sys.version_info[0:3]]) + ', ' + sys.version_info[3]
 
 @app.route('/url_for')
 def url_for_demo():
