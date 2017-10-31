@@ -1,6 +1,6 @@
 import os
 import sys
-from flask import Flask, url_for, request, render_template
+from flask import Flask, url_for, request, render_template, redirect, flash
 app = Flask(__name__)
 
 @app.route('/login2', methods=['GET', 'POST'])
@@ -8,7 +8,8 @@ def login2():
     error = None
     if request.method == 'POST':
         if valid_login(request.form['username'], request.form['password']):
-            return 'Welcome back, %s' % request.form['username']
+            flash("Succesfully logged in")
+            return redirect(url_for('welcome', username=request.form.get('username')))
         else:
             error = 'Incorrect username and password'
     return render_template('login.html', error=error)
@@ -19,6 +20,10 @@ def valid_login(username, password): #helper function without route
     else:
         return False
 
+@app.route('/welcome/<username>')
+def welcome(username):
+    return render_template('welcome.html', username=username)
+        
 @app.route('/hellow')
 @app.route('/hellow/<name>')
 def hello(name=None):
@@ -65,4 +70,5 @@ if __name__ == '__main__':
     host = '0.0.0.0'
     port = 55000
     app.debug = True
+    app.secret_key = 'simple_super_secret_key' #for flashing messages
     app.run(host=host, port=port)
