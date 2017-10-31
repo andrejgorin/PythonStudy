@@ -1,7 +1,43 @@
 import os
 import sys
-from flask import Flask, url_for
+from flask import Flask, url_for, request, render_template
 app = Flask(__name__)
+
+@app.route('/login2', methods=['GET', 'POST'])
+def login2():
+    error = None
+    if request.method == 'POST':
+        if valid_login(request.form['username'], request.form['password']):
+            return 'Welcome back, %s' % request.form['username']
+        else:
+            error = 'Incorrect username and password'
+    return render_template('login.html', error=error)
+    
+def valid_login(username, password): #helper function without route
+    if username == password:
+        return True
+    else:
+        return False
+
+@app.route('/hellow')
+@app.route('/hellow/<name>')
+def hello(name=None):
+    return render_template('hello.html', name=name)
+
+@app.route('/login1', methods=['GET', 'POST'])
+def login1():
+    if request.method == 'POST':
+        return 'username is ' + request.values['username']
+    else:
+        return '<form method="post" action="/login1"><input type="text" name="username" /><p><button type="submit">Submit</button></form>'
+
+@app.route('/login', methods=['GET'])
+def login():
+    if request.values:
+        return 'username is ' + request.values['username']
+    else:
+        return '<form method="get" action="/login"><input type="text" name="username" /><p><button type="submit">Submit</button></form>'
+
 @app.route('/')
 def index():
     
