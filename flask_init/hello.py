@@ -1,28 +1,51 @@
 import os
 import sys
-from flask import Flask, url_for, request, render_template, redirect, flash
+from flask import Flask, url_for, request, render_template, redirect, flash, make_response
 app = Flask(__name__)
+
+@app.route('/login3', methods=['GET', 'POST']) #using cookies
+def login3():
+    error = None
+    if request.method == 'POST':
+        if valid_login(request.form['username'], request.form['password']):
+            response = make_response(redirect(url_for('welcome')))
+            response.set_cookie('username', request.form.get('username'))
+            flash("Succesfully logged in")
+            return response
+        else:
+            error = 'Incorrect username and password'
+    return render_template('login3.html', error=error)
+    
+@app.route('/logout') #using cookies
+def logout():
+    response = make_response(redirect(url_for('login3')))
+    response.set_cookie('username', '', expires=0)
+    return response
 
 @app.route('/login2', methods=['GET', 'POST'])
 def login2():
     error = None
     if request.method == 'POST':
         if valid_login(request.form['username'], request.form['password']):
-            flash("Succesfully logged in")
+            #flash("Succesfully logged in")
             return redirect(url_for('welcome', username=request.form.get('username')))
         else:
             error = 'Incorrect username and password'
     return render_template('login.html', error=error)
     
 def valid_login(username, password): #helper function without route
-    if username == password:
+    if (username == password):
         return True
     else:
         return False
 
-@app.route('/welcome/<username>')
-def welcome(username):
-    return render_template('welcome.html', username=username)
+@app.route('/')
+def welcome():
+    username = request.cookies.get('username')
+    if username:
+        return render_template('welcome.html', username=username)
+    else:
+        return redirect(url_for('login3'))
         
 @app.route('/hellow')
 @app.route('/hellow/<name>')
