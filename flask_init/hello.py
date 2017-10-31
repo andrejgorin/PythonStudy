@@ -2,7 +2,6 @@ import os
 import sys
 from flask import Flask, url_for, request, render_template, redirect, flash, make_response
 app = Flask(__name__)
-
 @app.route('/login3', methods=['GET', 'POST']) #using cookies
 def login3():
     error = None
@@ -10,8 +9,11 @@ def login3():
         if valid_login(request.form['username'], request.form['password']):
             response = make_response(redirect(url_for('welcome')))
             response.set_cookie('username', request.form.get('username'))
-            flash("Succesfully logged in")
-            return response
+            if if_flash(request.form['username'], request.form['password']):
+                flash("Succesfully logged in")
+            else:
+                flash('Please enter credentials')
+            return (response)#, username, password)
         else:
             error = 'Incorrect username and password'
     return render_template('login3.html', error=error)
@@ -35,6 +37,12 @@ def login2():
     
 def valid_login(username, password): #helper function without route
     if (username == password):
+        return True
+    else:
+        return False
+        
+def if_flash(username, password):
+    if username and password:
         return True
     else:
         return False
