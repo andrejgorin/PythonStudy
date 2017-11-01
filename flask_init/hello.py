@@ -1,7 +1,29 @@
 import os
+import logging
+from logging.handlers import RotatingFileHandler
 import sys
-from flask import Flask, url_for, request, render_template, redirect, flash, make_response
+from flask import Flask, url_for, request, render_template, redirect, flash, make_response,session
 app = Flask(__name__)
+
+
+
+@app.route('/login4', methods=['GET', 'POST']) #using sessions
+def login4():
+    error = None
+    if request.method == 'POST':
+        if valid_login(request.form['username'], request.form['password']) and \
+        if_flash(request.form['username'], request.form['password']): #if statement with multiple strings
+            session['username'] = request.form.get('username')
+            if if_flash(request.form['username'], request.form['password']):
+                flash("Succesfully logged in")
+            else:
+                flash('Please enter credentials')
+            return redirect(url_for('welcome'))
+        else:
+            error = 'Incorrect username and password'
+            app.logger.warning('Incorrect username and password for user (%s)', request.form.get('username'))
+    return render_template('login4.html', error=error)
+    
 @app.route('/login3', methods=['GET', 'POST']) #using cookies
 def login3():
     error = None
@@ -17,7 +39,19 @@ def login3():
         else:
             error = 'Incorrect username and password'
     return render_template('login3.html', error=error)
+
+@app.route('/') #using sessions
+def welcome4():
+    if 'username' in session:
+        return render_template('welcome4.html', username=session['username'])
+    else:
+        return redirect(url_for('login4'))
     
+@app.route('/logout4') #using sessions
+def logout4():
+    session.pop('username', None)  
+    return redirect(url_for('login4'))
+
 @app.route('/logout') #using cookies
 def logout():
     response = make_response(redirect(url_for('login3')))
@@ -101,5 +135,12 @@ if __name__ == '__main__':
     host = '0.0.0.0'
     port = 55000
     app.debug = True
-    app.secret_key = 'simple_super_secret_key' #for flashing messages
+    #app.secret_key = 'simple_super_secret_key' #for flashing messages
+    app.secret_key = '\xf5\x99*\xd7\x9e:U\xcf2`\t-\xa9\x90"\xe2\xc1\x8aw\xfa\xaa\x17*\x8d'
+    #logging
+    handler = RotatingFileHandler('error.log', maxBytes=10000, backupCount=1)
+    handler.setLevel(logging.INFO)
+    app.logger.addHandler(handler)
+    
     app.run(host=host, port=port)
+    #to get secret_key in terminal: import os -> os.urandom(24)
