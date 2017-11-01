@@ -5,7 +5,7 @@
 <tr><th><b>Device:</b></th><th><b>Template name:</b></th><th><b>Comments:</b></th></tr>
     {% for arg in arg %}
        {% set uid = arg %}
-       <tr   onclick="document.location='/confgen/{{uid[0]}}'" style="cursor:hand" >
+       <tr   onclick="document.location='{{url_for('test', query=uid[0])}}'" style="cursor:hand" >
        {% for ar in arg %}
          {% if loop.index == 3 %}
           <td width="80">{{ar}}</td> 
@@ -21,3 +21,5 @@
     {% endfor %}
 </table>
 {% endblock %}
+{{url_for('test', query=uid[0])}}
+{# /tradent/confgendb/confgen/{{uid[0]}} #}

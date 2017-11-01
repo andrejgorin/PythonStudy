@@ -14,12 +14,12 @@
 <div class="wrapper">
 
 	<div class="header">
-		 <div align="center"><H1><a href="/index">Confgen</a></H1></div>
+		 <div align="center"><H1><a href="{{url_for('index')}}">Confgen</a></H1></div>
 		         <table align="center" width="90%"><tr><td>
-                 <font size="3"><a href="/index">Home</a>&emsp;
-                 <a href="/manual">From file</a>&emsp;
+                 <font size="3"><a href="{{url_for('index')}}">Home</a>&emsp;
+                 <a href="{{url_for('manual')}}">From file</a>&emsp;
                  {% for result in results %}
-                 <a href="/{{result}}">{{result}}</a>&emsp;
+                 <a href="{{url_for('fvendor', vendor=result)}}">{{result}}</a>&emsp;
                  {% endfor %}</font>
 				 </td></tr></table>
 	</div><!-- .header-->
