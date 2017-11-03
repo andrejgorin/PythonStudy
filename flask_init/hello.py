@@ -74,7 +74,7 @@ def valid_login(username, password): #helper function without route
     #mysql block
     MYSQL_DATABASE_HOST = os.getenv('IP', '0.0.0.0')
     MYSQL_DATABASE_USER = 'root'
-    MYSQL_DATABASE_PASSWORD = 'a6771330'
+    MYSQL_DATABASE_PASSWORD = 'root'
     MYSQL_DATABASE_DB = 'my_flask_app'
     conn = pymysql.connect(
         host = MYSQL_DATABASE_HOST,
