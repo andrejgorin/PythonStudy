@@ -1,5 +1,6 @@
 import os
 import logging
+import pymysql
 from logging.handlers import RotatingFileHandler
 import sys
 from flask import Flask, url_for, request, render_template, redirect, flash, make_response,session
@@ -70,7 +71,21 @@ def login2():
     return render_template('login.html', error=error)
     
 def valid_login(username, password): #helper function without route
-    if (username == password):
+    #mysql block
+    MYSQL_DATABASE_HOST = os.getenv('IP', '0.0.0.0')
+    MYSQL_DATABASE_USER = 'root'
+    MYSQL_DATABASE_PASSWORD = 'a6771330'
+    MYSQL_DATABASE_DB = 'my_flask_app'
+    conn = pymysql.connect(
+        host = MYSQL_DATABASE_HOST,
+        user = MYSQL_DATABASE_USER,
+        passwd = MYSQL_DATABASE_PASSWORD,
+        db = MYSQL_DATABASE_DB
+        )
+    cursor = conn.cursor()
+    cursor.execute('SELECT * from user WHERE username="%s" AND password="%s"' % (username, password))
+    data = cursor.fetchone()
+    if data:
         return True
     else:
         return False
