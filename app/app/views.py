@@ -1,8 +1,8 @@
-from flask import render_template
+from flask import render_template, request
 from app import app
 from vdb import frdb
 from jinja2 import Template, Environment, meta
-from forms import TemForm, ContactForm#, InputForm
+from forms import TemForm, ContactForm, TempTemplate, TempHeader, TempString
 
 @app.route("/")
 @app.route('/index')
@@ -13,7 +13,7 @@ def index():
     return render_template("index.html",
            results = results)
 
-@app.route('/<vendor>')
+@app.route('/<vendor>', methods = ['GET', 'POST'])
 
 def fvendor(vendor):
     results = frdb("SELECT vendor FROM device_templates")
@@ -29,7 +29,7 @@ def fvendor(vendor):
            results = results,
            vendor = vendor)
 
-@app.route('/confgen/<query>', methods = ['GET', 'POST'])
+@app.route('/confgen/<int:query>', methods = ['GET', 'POST'])
 
 def test(query):
     results = frdb("SELECT vendor FROM device_templates")
@@ -142,3 +142,112 @@ def manual():
                            stringtem = stringtem,
                            nlines = nlines,
                            line_length = line_length)
+                           
+@app.route('/combo', methods = ['GET', 'POST'])
+
+def combo():
+    #checkbox_value = []
+    results = frdb("SELECT vendor FROM device_templates")
+    results = {i[0] for i in results}
+    #header = frdb("SELECT * FROM device_templates where uid = '%s'" % "Cisco")
+    tform = ContactForm()
+    buffer = TempTemplate()
+    headers = TempHeader()
+    longstring = TempString()
+    template = ''
+    i = 0
+    paramlist = []
+    temp_header_string = ''
+    nlines = False
+    line_length = False
+    temout = []
+    tformdata = False
+    stringtem = ''
+    dicis = []
+    header = []
+    head = []
+    header_string = ''
+    line_length = 45
+    temp = False
+    stringvars = False
+    checkbox_value = request.form.getlist('checkbox_list')
+    checkbox_value = [value.encode('utf-8') for value in checkbox_value] 
+    checkbox_value = map(int, checkbox_value)
+    for check in checkbox_value:        
+        one_header = frdb("SELECT * FROM device_templates where uid = '%d'" % check)
+        header.append(one_header[0][1:4])
+    if header:
+        for head in header:
+            if i == (len(header)) - 1:
+                for h in head:
+                    header_string = header_string + str(h) + ' '
+                header_string = header_string + ' '
+            else:
+                for h in head:
+                    header_string = header_string + str(h) + ' '
+                header_string = header_string + '& '
+            i += 1
+        header_string = header_string + 'configuration'
+        headers.header_list.data = header
+    if headers.header_list.data:
+        temp_header = headers.header_list.data
+    if header_string:
+        longstring.string_list.data = header_string
+    if longstring.string_list.data:
+        header_string = longstring.string_list.data
+
+
+
+    for check in checkbox_value:
+        one_template = frdb("SELECT template FROM device_templates where uid = '%s'" % check)
+        one_template = str(one_template[0][0])
+        template = template + '\n' + '!'*40 + '\n' + one_template
+    if template:
+        buffer.temp_template.data = template
+    if buffer.temp_template.data:#buffer.validate():
+        temp = buffer.temp_template.data
+        env = Environment()
+        ast = env.parse(buffer.temp_template.data)
+        vars = meta.find_undeclared_variables(ast)
+        vars = list(vars)
+        stringvars = ';'.join(vars)
+        temout = []
+        if tform.validate():
+            tformdata = tform.body.data
+            tformdata = tformdata.replace('\r\n', '')
+            tformdata = tformdata.encode('utf-8')
+            tformdata = tformdata.split('#')
+            template = buffer.temp_template.data
+            template = Template(template, trim_blocks=True, lstrip_blocks=True)
+            for single in tformdata:
+                paramlist.append(single.split(';'))
+            for singleparam in paramlist:
+                dicis.append(dict(zip(vars, singleparam))) 
+            for dic in dicis:
+                temout.append(template.render(dic))
+            stringtem = '\n\n'.join(temout)
+            nlines = stringtem.count('\n') + 4       
+            for lines in stringtem.split('\n'):
+                if line_length < len(lines):
+                    line_length = len(lines)
+    ###############################################
+    return render_template('combo.html', 
+                           checkbox_value = checkbox_value, 
+                           template = template,
+                           results = results,
+                           buffer = buffer,
+                           stringvars = stringvars,
+                           tform = tform,
+                           stringtem = stringtem,
+                           temp = temp,
+                           temout = temout,
+                           tformdata = tformdata,
+                           paramlist = paramlist,
+                           nlines = nlines,
+                           line_length = line_length,
+                           header = header,
+                           headers = headers,
+                           temp_header = temp_header,
+                           header_string = header_string,
+                           temp_header_string = temp_header_string,
+                           longstring = longstring)

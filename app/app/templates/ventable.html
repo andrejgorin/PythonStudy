@@ -2,24 +2,27 @@
 {% block content %}
 <div align="center"><H4>{{vendor}} templates</H4></div>
 <table class="table1" border="1" width="90%" align="center">
-<tr><th><b>Device:</b></th><th><b>Template name:</b></th><th><b>Comments:</b></th></tr>
+<tr><th><b>Device:</b></th><th><b>Template name:</b></th><th><b>Comments:</b></th><th><b>Combo:</b></th></tr>
+    <form action="{{url_for('combo')}}" method="post">
     {% for arg in arg %}
        {% set uid = arg %}
-       <tr   onclick="document.location='{{url_for('test', query=uid[0])}}'" style="cursor:hand" >
        {% for ar in arg %}
          {% if loop.index == 3 %}
-          <td width="80">{{ar}}</td> 
+          <td onclick="document.location='{{url_for('test', query=uid[0])}}'" style="cursor:hand" width="80">{{ar}}</td> 
          {% endif %}
          {% if loop.index == 4 %}
-          <td width="160">{{ar}}</td> 
+          <td onclick="document.location='{{url_for('test', query=uid[0])}}'" style="cursor:hand" width="160">{{ar}}</td> 
          {% endif %}
          {% if loop.index == 5 %}
-          <td>{{ar}}</td> 
-         {% endif %}
+          <td onclick="document.location='{{url_for('test', query=uid[0])}}'" style="cursor:hand">{{ar}}</td> 
+          <td width="50" align="center"><input type="checkbox" name="checkbox_list" value="{{uid[0]}}"></td>
+          {% endif %}
        {% endfor %}
        </tr>
     {% endfor %}
-</table>
+</table><br>
+<table width="90%" align="center"><tr><td align="right">
+<p><input type="submit" value="Combo" class="button"></p>
+</form>
+</td></tr></table>
 {% endblock %}
-{{url_for('test', query=uid[0])}}
-{# /tradent/confgendb/confgen/{{uid[0]}} #}
