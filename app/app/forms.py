@@ -4,7 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms import TextField, BooleanField, HiddenField
 from wtforms.validators import Required
 
-class ContactForm(FlaskForm):
+class DataForm(FlaskForm):
     body = StringField(u'Body', widget=TextArea(), validators = [Required()])
 
 class TemForm(FlaskForm):

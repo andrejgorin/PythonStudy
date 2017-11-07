@@ -2,7 +2,7 @@ from flask import render_template, request
 from app import app
 from vdb import frdb
 from jinja2 import Template, Environment, meta
-from forms import TemForm, ContactForm, TempTemplate, TempHeader, TempString
+from forms import TemForm, DataForm, TempTemplate, TempHeader, TempString
 
 @app.route("/")
 @app.route('/index')
@@ -31,7 +31,7 @@ def fvendor(vendor):
 
 @app.route('/confgen/<int:query>', methods = ['GET', 'POST'])
 
-def test(query):
+def confgen(query):
     results = frdb("SELECT vendor FROM device_templates")
     results = {i[0] for i in results}
     strquery = query
@@ -44,7 +44,7 @@ def test(query):
     vars = meta.find_undeclared_variables(ast)
     vars = list(vars)
     stringvars = ';'.join(vars)
-    tform = ContactForm()
+    tform = DataForm()
     tformdata = []
     output = ' '   
     tempresult = False
@@ -132,25 +132,19 @@ def manual():
             if line_length < len(lines):
                 line_length = len(lines)
     return render_template('manual.html',
-                           manform = manform,
-                           results = results,
-                           inputtemplate = inputtemplate,
-                           template = template,
                            inputform = inputform,
-                           temout = temout,
                            stringvars = stringvars,
-                           stringtem = stringtem,
+                           manform = manform,
                            nlines = nlines,
-                           line_length = line_length)
+                           stringtem = stringtem,
+                           results = results)
                            
 @app.route('/combo', methods = ['GET', 'POST'])
 
 def combo():
-    #checkbox_value = []
     results = frdb("SELECT vendor FROM device_templates")
     results = {i[0] for i in results}
-    #header = frdb("SELECT * FROM device_templates where uid = '%s'" % "Cisco")
-    tform = ContactForm()
+    tform = DataForm()
     buffer = TempTemplate()
     headers = TempHeader()
     longstring = TempString()
@@ -195,9 +189,6 @@ def combo():
         longstring.string_list.data = header_string
     if longstring.string_list.data:
         header_string = longstring.string_list.data
-
-
-
     for check in checkbox_value:
         one_template = frdb("SELECT template FROM device_templates where uid = '%s'" % check)
         one_template = str(one_template[0][0])
@@ -230,24 +221,16 @@ def combo():
             for lines in stringtem.split('\n'):
                 if line_length < len(lines):
                     line_length = len(lines)
-    ###############################################
     return render_template('combo.html', 
-                           checkbox_value = checkbox_value, 
-                           template = template,
-                           results = results,
-                           buffer = buffer,
-                           stringvars = stringvars,
+                           header_string = header_string,
                            tform = tform,
-                           stringtem = stringtem,
-                           temp = temp,
+                           stringvars = stringvars,
+                           buffer = buffer,
+                           headers = headers,
+                           longstring = longstring,
                            temout = temout,
-                           tformdata = tformdata,
-                           paramlist = paramlist,
                            nlines = nlines,
                            line_length = line_length,
-                           header = header,
-                           headers = headers,
-                           temp_header = temp_header,
-                           header_string = header_string,
-                           temp_header_string = temp_header_string,
-                           longstring = longstring)
+                           stringtem = stringtem,
+                           temp = temp,
+                           results = results)
