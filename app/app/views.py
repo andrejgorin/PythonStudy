@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for
 from app import app
 from vdb import frdb
 from jinja2 import Template, Environment, meta
@@ -18,12 +18,14 @@ def index():
 def fvendor(vendor):
     results = frdb("SELECT vendor FROM device_templates")
     results = {i[0] for i in results}
-#    strven = vendor.encode('utf-8')
     strven = vendor
     resall = frdb("SELECT * FROM device_templates WHERE vendor LIKE '%s'" % strven)
     arg = []
     for resall in resall:
         arg.append(resall[:5])
+    checkbox_temp = request.form.getlist('checkbox_list')
+    if checkbox_temp:
+        return redirect(url_for('combo', checkbox_data=checkbox_temp))
     return render_template("ventable.html",
            arg = arg,
            results = results,
@@ -139,9 +141,9 @@ def manual():
                            stringtem = stringtem,
                            results = results)
                            
-@app.route('/combo', methods = ['GET', 'POST'])
+@app.route('/combo/<checkbox_data>', methods = ['GET', 'POST'])
 
-def combo():
+def combo(checkbox_data):
     results = frdb("SELECT vendor FROM device_templates")
     results = {i[0] for i in results}
     tform = DataForm()
@@ -164,9 +166,12 @@ def combo():
     line_length = 45
     temp = False
     stringvars = False
-    checkbox_value = request.form.getlist('checkbox_list')
-    checkbox_value = [value.encode('utf-8') for value in checkbox_value] 
-    checkbox_value = map(int, checkbox_value)
+    wrong_list = ["u", "[", "]", "'"]
+    checkbox_data = checkbox_data.encode('utf-8')
+    for sym in wrong_list:
+        checkbox_data = checkbox_data.replace(sym, '')
+    checkbox_data = checkbox_data.split(', ')
+    checkbox_value = map(int, checkbox_data)
     for check in checkbox_value:        
         one_header = frdb("SELECT * FROM device_templates where uid = '%d'" % check)
         header.append(one_header[0][1:4])
@@ -233,4 +238,23 @@ def combo():
                            line_length = line_length,
                            stringtem = stringtem,
                            temp = temp,
-                           results = results)
+                           results = results,
+                           checkbox_data = checkbox_data,
+                           )
+                           
+@app.route('/all', methods = ['GET', 'POST'])
+
+def all():
+    results = frdb("SELECT vendor FROM device_templates")
+    results = {i[0] for i in results}
+    resall = frdb("SELECT * FROM device_templates")
+    arg = []
+    for resall in resall:
+        arg.append(resall[:5])
+    checkbox_temp = request.form.getlist('checkbox_list')
+    if checkbox_temp:
+        return redirect(url_for('combo', checkbox_data=checkbox_temp))
+    return render_template("allven.html",
+           arg = arg,
+           results = results,
+           )
