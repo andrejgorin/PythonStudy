@@ -15,7 +15,7 @@
          {% endif %}
          {% if loop.index == 5 %}
           <td onclick="document.location='{{url_for('confgen', query=uid[0])}}'" style="cursor:hand">{{ar}}</td> 
-          <td width="50" align="center"><input type="checkbox" name="checkbox_list" value="{{uid[0]}}"></td>
+          <td class="td1" width="50" align="center"><input type="checkbox" name="checkbox_list" value="{{uid[0]}}"></td>
           {% endif %}
        {% endfor %}
        </tr>

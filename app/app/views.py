@@ -8,18 +8,15 @@ from forms import TemForm, DataForm, TempTemplate, TempHeader, TempString
 @app.route('/index')
 
 def index():
-    results = frdb("SELECT vendor FROM device_templates")
-    results = {i[0] for i in results}
+    results = vendor_menu()
     return render_template("index.html",
            results = results)
 
 @app.route('/<vendor>', methods = ['GET', 'POST'])
 
 def fvendor(vendor):
-    results = frdb("SELECT vendor FROM device_templates")
-    results = {i[0] for i in results}
-    strven = vendor
-    resall = frdb("SELECT * FROM device_templates WHERE vendor LIKE '%s'" % strven)
+    results = vendor_menu()
+    resall = frdb("SELECT * FROM device_templates WHERE vendor LIKE '%s'" % vendor)
     arg = []
     for resall in resall:
         arg.append(resall[:5])
@@ -34,11 +31,9 @@ def fvendor(vendor):
 @app.route('/confgen/<int:query>', methods = ['GET', 'POST'])
 
 def confgen(query):
-    results = frdb("SELECT vendor FROM device_templates")
-    results = {i[0] for i in results}
-    strquery = query
-    temp = frdb("SELECT template FROM device_templates where uid = '%s'" % strquery)
-    header = frdb("SELECT * FROM device_templates where uid = '%s'" % strquery)
+    results = vendor_menu()
+    temp = frdb("SELECT template FROM device_templates where uid = '%s'" % query)
+    header = frdb("SELECT * FROM device_templates where uid = '%s'" % query)
     template = temp[0][0]
     temp = template
     env = Environment()
@@ -55,7 +50,6 @@ def confgen(query):
     paramlist = []
     dicis = []
     temout = []
-    #if tform.validate_on_submit():
     line_length = 45
     if tform.validate():
         tformdata = tform.body.data
@@ -91,9 +85,7 @@ def confgen(query):
 @app.route('/manual', methods = ['GET', 'POST'])
 
 def manual():
-    results = frdb("SELECT vendor FROM device_templates")
-    results = {i[0] for i in results}
-    #manform = InputForm()
+    results = vendor_menu()
     manform = TemForm()
     inputform = TemForm()
     template = ''
@@ -144,8 +136,7 @@ def manual():
 @app.route('/combo/<checkbox_data>', methods = ['GET', 'POST'])
 
 def combo(checkbox_data):
-    results = frdb("SELECT vendor FROM device_templates")
-    results = {i[0] for i in results}
+    results = vendor_menu()
     tform = DataForm()
     buffer = TempTemplate()
     headers = TempHeader()
@@ -245,8 +236,7 @@ def combo(checkbox_data):
 @app.route('/all', methods = ['GET', 'POST'])
 
 def all():
-    results = frdb("SELECT vendor FROM device_templates")
-    results = {i[0] for i in results}
+    results = vendor_menu()
     resall = frdb("SELECT * FROM device_templates")
     arg = []
     for resall in resall:
@@ -258,3 +248,8 @@ def all():
            arg = arg,
            results = results,
            )
+           
+def vendor_menu():
+    results = frdb("SELECT vendor FROM device_templates")
+    results = {i[0] for i in results}
+    return results
