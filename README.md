@@ -1,2 +1,2 @@
 # PythonStudy
-I'm studying Python 
+I'm studying Python. 
