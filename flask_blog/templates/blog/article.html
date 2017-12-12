@@ -8,6 +8,10 @@
     
     <div class='col-md-offset-3 col-md-6'>
     
+        {% if post.image %}
+            <img src="{{ post.imgsrc }}" height="150px" class='img-rounded' />
+        {% endif %}
+    
     <h3>{{ post.title }}</h3>
     
     {{ post.body|markdown }}
