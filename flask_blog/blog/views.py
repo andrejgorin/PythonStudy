@@ -59,7 +59,7 @@ def setup():
         if author.id and blog.id:
             db.session.commit()
             flash("Blog created")
-            return redirect (url_for('admin'))
+            return redirect (url_for('index'))
         else:
             db.session.rollback()
             error = "Error creating blog"
