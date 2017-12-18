@@ -7,7 +7,7 @@ db = MySQLdb.connect(host="localhost",    # your host, usually localhost
                      db="example")        # name of the data base
 
 # you must create a Cursor object. It will let
-#  you execute all the queries you need
+#  you execute all the queries you need.
 cur = db.cursor()
 
 # Use all the SQL you like
