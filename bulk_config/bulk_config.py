@@ -6,18 +6,17 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Bulk config script')
 parser.add_argument('-f', action="store", dest="file_hosts", help='File with list of hosts', required=True)
-#parser.add_argument('-e', action="store", dest="file_comms", help='File with list of commands')
-#parser.add_argument('-c', nargs='+', dest="commands", help='List of commands, like -c "comm1", "comm2"')
 group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('-e', action="store", dest="file_comms", help='File with list of commands')
 group.add_argument('-c', nargs='+', dest="commands", help='List of commands')
 args = parser.parse_args()
-
+"""print args
+for command in args.commands:
+    print command"""
 def execute_from_file(**device_params):
     with ConnectHandler(**device_params) as ssh:
         ssh.enable()
         result = ssh.send_config_from_file(args.file_comms)
-        #return result
         print result
 
 def execute_from_commands(**device_params):
@@ -25,7 +24,6 @@ def execute_from_commands(**device_params):
         ssh.enable()
         for command in args.commands:
             result = ssh.send_command(command)
-            #return result
             print result        
         
 def search_vendor(line):
@@ -57,12 +55,10 @@ with open(args.file_hosts, 'r') as hosts:
                              'username': user,
                              'password': passw,
                              'secret': enable_pass}
-            if args.file_comms and not args.commands:                 
+            if args.file_comms:                 
                 execute = execute_from_file(**device_params)
-            elif not args.file_comms and args.commands:
+            elif args.commands:
                 execute = execute_from_commands(**device_params)
-            else:
-                print 'Specify any of -c or -e, not both'
         else:
             print 'Unrecognized device: ' + line
  
