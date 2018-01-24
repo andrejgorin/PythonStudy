@@ -4,7 +4,7 @@ import re
 from netmiko import ConnectHandler
 
 def search_vendor(line):
-    match = re.search('(ios|hpc|cnx|csb)', line)
+    match = re.search('(ios$|hpc$|cnx$|csb$)', line)
     if match:
         vendor = match.group()
         ven_list = {'ios': 'cisco_ios',
@@ -33,8 +33,11 @@ with open('hosts.txt', 'r') as hosts:
                              'password': passw,
                              'secret': enable_pass}
                              
-        with ConnectHandler(**device_params) as ssh:
-            ssh.enable()
-            #result = ssh.send_command(COMMAND)
-            result = ssh.send_config_from_file('command.txt')
-            print(result)
+            with ConnectHandler(**device_params) as ssh:
+                ssh.enable()
+                #result = ssh.send_command(command)
+                result = ssh.send_config_from_file('command.txt')
+                print(result)
+        else:
+            print 'Unrecognized device: ' + line
+ 
