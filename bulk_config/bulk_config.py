@@ -1,3 +1,5 @@
+import threading
+import multiprocessing
 import getpass
 import datetime
 from time import sleep
@@ -11,6 +13,23 @@ group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('-e', action="store", dest="file_comms", help='File with list of commands')
 group.add_argument('-c', nargs='+', dest="commands", help='List of commands')
 args = parser.parse_args()
+
+if_errors = []        
+attention = '''
+
+###############################################
+#                                             #
+#  There was some problems. See conf_log.log  #
+#                                             #
+###############################################
+
+'''
+
+class UnknownBox(Exception):
+    def __init__(self, mismatch):
+        self.mismatch = mismatch
+    def __str__(self):
+        return 'Unrecognized device: ' + self.mismatch
 
 def execute_from_file(**device_params):
     with ConnectHandler(**device_params) as ssh:
@@ -38,43 +57,47 @@ def search_vendor(line):
     else:
         return 'no vendor'
 
-user = raw_input('username: ')
-passw = getpass.getpass()
-enable_pass = getpass.getpass(prompt='Enable password: ')
-
-error_log = False
-with open(args.file_hosts, 'r') as hosts:
-    for line in hosts:
-        try:
-            line = line.rstrip()
-            box_type = search_vendor(line)
-            if box_type != 'no vendor':
-                #sleep(0.2)
-                print('Connection to device ' + line)
-                device_params = {'device_type': box_type,
-                                 'ip': line,
-                                 'username': user,
-                                 'password': passw,
-                                 'secret': enable_pass}
-                if args.file_comms:                 
-                    execute = execute_from_file(**device_params)
-                elif args.commands:
-                    execute = execute_from_commands(**device_params)
-            else:
-                print 'Unrecognized device: ' + line
-        except (NetMikoTimeoutException, NetMikoAuthenticationException)as oops: 
-            error_log = ('='*30+'\n'+str(oops)+' at '+str(datetime.datetime.now())+'\n'+'='*30+'\n') 
-            with open('conf_log.log', 'a') as log:
-                log.write(error_log)
-if error_log:
-    print '''
-
-###############################################
-#                                             #
-#  There was some problems. See conf_log.log  #
-#                                             #
-###############################################
-
-'''
+def get_cred():
+    user = raw_input('username: ')
+    passw = getpass.getpass()
+    enable_pass = getpass.getpass(prompt='Enable password: ')
+    return user, passw, enable_pass
     
+def conn_process(line):
+    try:
+        line = line.rstrip()
+        box_type = search_vendor(line)
+        if box_type != 'no vendor':
+            print('Connection to device ' + line)
+            device_params = {'device_type': box_type,
+                             'ip': line,
+                             'username': cred[0],
+                             'password': cred[1],
+                             'secret': cred[2]}
+            if args.file_comms:                 
+                execute = execute_from_file(**device_params)
+            elif args.commands:
+                execute = execute_from_commands(**device_params)
+        else:
+            raise UnknownBox(line)
+    except (NetMikoTimeoutException, NetMikoAuthenticationException, UnknownBox)as oops: 
+        error_log = ('='*30+'\n'+str(oops)+' at '+str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))+'\n'+'='*30+'\n') 
+        with open('conf_log.log', 'a') as log:
+            log.write(error_log)
+            if_errors.append(error_log)
                 
+cred = get_cred()        
+
+def conn_multi(function):
+    threads = []
+    with open(args.file_hosts, 'r') as hosts:
+        for line in hosts:
+            th = threading.Thread(target = function, args = (line,))
+            th.start()
+            threads.append(th)
+        for th in threads:
+            th.join()
+            
+conn_multi(conn_process)       
+if if_errors:
+    print attention
