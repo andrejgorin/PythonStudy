@@ -1,11 +1,20 @@
+# -*- coding: utf-8 -*-
+
 import threading
-import multiprocessing
 import getpass
 import datetime
 from time import sleep
 import re
 from netmiko import ConnectHandler, NetMikoTimeoutException, NetMikoAuthenticationException
 import argparse
+
+ATTENTION = '''
+###############################################
+#                                             #
+#  There was some problems. See conf_log.log  #
+#                                             #
+###############################################
+'''
 
 parser = argparse.ArgumentParser(description='Bulk config script')
 parser.add_argument('-f', action="store", dest="file_hosts", help='File with list of hosts', required=True)
@@ -14,34 +23,23 @@ group.add_argument('-e', action="store", dest="file_comms", help='File with list
 group.add_argument('-c', nargs='+', dest="commands", help='List of commands')
 args = parser.parse_args()
 
-if_errors = []        
-attention = '''
-
-###############################################
-#                                             #
-#  There was some problems. See conf_log.log  #
-#                                             #
-###############################################
-
-'''
-
 class UnknownBox(Exception):
     def __init__(self, mismatch):
         self.mismatch = mismatch
     def __str__(self):
         return 'Unrecognized device: ' + self.mismatch
 
-def execute_from_file(**device_params):
-    with ConnectHandler(**device_params) as ssh:
+def execute_from_file(**kwargs):
+    with ConnectHandler(**kwargs) as ssh:
         ssh.enable()
-        result = ssh.send_config_from_file(args.file_comms)
+        result = '\n\n' + ssh.find_prompt() + '\n' + ssh.send_config_from_file(args.file_comms)
         print result
 
-def execute_from_commands(**device_params):
-    with ConnectHandler(**device_params) as ssh:
+def execute_from_commands(**kwargs):
+    with ConnectHandler(**kwargs) as ssh:
         ssh.enable()
         for command in args.commands:
-            result = ssh.send_command(command)
+            result = '\n\n' + ssh.find_prompt() + '\n' + ssh.send_command(command) 
             print result        
         
 def search_vendor(line):
@@ -86,8 +84,6 @@ def conn_process(line):
             log.write(error_log)
             if_errors.append(error_log)
                 
-cred = get_cred()        
-
 def conn_multi(function):
     threads = []
     with open(args.file_hosts, 'r') as hosts:
@@ -97,7 +93,10 @@ def conn_multi(function):
             threads.append(th)
         for th in threads:
             th.join()
-            
+
+cred = get_cred()
+if_errors = []        
+                    
 conn_multi(conn_process)       
 if if_errors:
-    print attention
+    print ATTENTION
