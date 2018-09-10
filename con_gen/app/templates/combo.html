@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<table width="90%" align="center"><tr><td>
+<div align='center'><h4>{{ header_string }}</h4></div>
+<p><b>Your arguments:</b></p>
+<form action="" method="post" name="submit">
+{{tform.hidden_tag()}} 
+{{tform.body(cols="45", rows="10")}}
+<p>{{ stringvars }}</p>
+<p><input type="submit" value="Submit" class="button"></p>
+{{buffer.hidden_tag()}} 
+{{buffer.temp_template()}}
+{{headers.hidden_tag()}} 
+{{headers.header_list()}}
+{{longstring.hidden_tag()}} 
+{{longstring.string_list()}}
+</form>
+
+{% if temout %}
+<form action="" method="post">
+<p><b>Result:</b></p>
+<p><textarea rows="{{nlines}}" cols="{{line_length}}" name="text">
+{{stringtem}}
+</textarea></p>
+</form>
+<hr>
+{% endif %}
+<pre>
+{{ temp }}
+</pre>
+</td></tr></table>
+{% endblock %}

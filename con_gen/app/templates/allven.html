@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div align="center"><H4>All templates</H4></div>
+<table class="table1" border="1" width="90%" align="center">
+<tr><th><b>Vendor:</b></th><th><b>Device:</b></th><th><b>Template name:</b></th><th><b>Comments:</b></th><th><b>Combo:</b></th></tr>
+    <form action="" method="post">
+    {% for arg in arg %}
+       {% set uid = arg %}
+       {% for ar in arg %}
+         {% if loop.index == 2 %}
+          <td onclick="document.location='{{url_for('confgen', query=uid[0])}}'" style="cursor:hand" width="80">{{ar}}</td> 
+         {% endif %}
+         {% if loop.index == 3 %}
+          <td onclick="document.location='{{url_for('confgen', query=uid[0])}}'" style="cursor:hand" width="80">{{ar}}</td> 
+         {% endif %}
+         {% if loop.index == 4 %}
+          <td onclick="document.location='{{url_for('confgen', query=uid[0])}}'" style="cursor:hand" width="160">{{ar}}</td> 
+         {% endif %}
+         {% if loop.index == 5 %}
+          <td onclick="document.location='{{url_for('confgen', query=uid[0])}}'" style="cursor:hand">{{ar}}</td> 
+          <td class="td1" width="50" align="center"><input type="checkbox" name="checkbox_list" value="{{uid[0]}}"></td>
+          {% endif %}
+       {% endfor %}
+       </tr>
+    {% endfor %}
+</table><br>
+<table width="90%" align="center"><tr><td align="right">
+<p><input type="submit" value="Combo" class="button"></p>
+</form>
+</td></tr></table>
+{% endblock %}
